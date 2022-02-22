@@ -9,6 +9,7 @@ public class Intersection {
   ArrayList<Street> schedules;
   int totalCycleTime;
   int time;
+  int wait = 0;
 
   boolean isPlaned = false;
 

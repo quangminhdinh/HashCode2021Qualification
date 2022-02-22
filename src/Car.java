@@ -4,6 +4,7 @@ import java.util.List;
 public class Car {
   int phase = 1;
   List<String> paths = new ArrayList<>();
+  List<String> paths1 = new ArrayList<>();
   List<Integer> streetDistances = new ArrayList<>();
   int time;
   int travelTime;
@@ -17,6 +18,7 @@ public class Car {
     for (Street street: streets) {
       streetDistances.add(street.length);
       this.paths.add(street.id);
+      this.paths1.add(street.id);
     }
   }
 

@@ -42,18 +42,27 @@ public class Processor {
 
   public static Processor getInstance() {
     if (processor == null) {
-      processor = new Processor("f.txt");
+      processor = new Processor("b.txt");
     }
     return processor;
   }
 
   public static void main(String[] args) {
     Processor optimizer = Processor.getInstance();
-    optimizer.optimizeSleepAssign();
+    optimizer.optimizeLmao();
+
+    int k = 0;
+    for (Intersection intersection : optimizer.intersections) {
+      System.out.println(k);
+      for (Street street : intersection.schedules)
+        System.out.print(street.id + street.greenLightDuration + " ");
+      System.out.println();
+      k++;
+    }
     System.out.println(optimizer.score);
-    optimizer.reset();
-    optimizer.run();
-    System.out.println(optimizer.score);
+//    optimizer.reset();
+//    optimizer.run();
+//    System.out.println(optimizer.score);
   }
 
   public void optimizeTest() {
@@ -82,6 +91,27 @@ public class Processor {
 
   }
 
+  public void optimizeLmao() {
+    boolean bruh = true;
+    while (bruh) {
+      bruh = false;
+      for (Car car : cars) {
+//      for (String path : car.paths) {
+        if (car.paths1.size() == 0) continue;
+        bruh = true;
+        String path = car.paths1.get(0);
+//        else durations.put(path, durations.get(path) + 1);
+        Intersection temp = intersections[streetmap.get(path).endIntersectionId];
+        if (!temp.schedules.contains(streetmap.get(path))) temp.addSchedule(streetmap.get(path));
+//      }
+        car.paths1.remove(0);
+      }
+    }
+
+
+    run();
+  }
+
   public void optimizeSleepAssign() {
     HashMap<String, Integer> durations = new HashMap<>();
     for (Car car : cars) {
@@ -104,15 +134,16 @@ public class Processor {
           for (Street street : intersection.incomingStreets) {
             if (street.getPotentialCars() > maxStreet.getPotentialCars()) maxStreet = street;
           }
-          if (intersection.schedules.contains(maxStreet) || maxStreet.getPotentialCars() == 0) {
+          if (intersection.schedules.contains(maxStreet)) {
             intersection.isPlaned = true;
-          } else {
+          } else if (intersection.wait == 0 && maxStreet.getPotentialCars() > 0) {
             intersection.addSchedule(maxStreet);
-//            wait = maxStreet.greenLightDuration;
+            intersection.wait = maxStreet.greenLightDuration;
           }
 
         }
         intersection.run();
+        if (intersection.wait > 0) intersection.wait--;
       }
       for (Street street : streets) street.updateStandby();
 //      if (wait > 0) wait--;
@@ -120,6 +151,18 @@ public class Processor {
   }
 
   public void optimizeGreedy() {
+
+    HashMap<String, Integer> durations = new HashMap<>();
+    for (Car car : cars) {
+      String path = car.paths.get(0);
+        if (durations.get(path) == null) durations.put(path, 2);
+//        else durations.put(path, durations.get(path) + 1);
+    }
+    for (Street street : streets) {
+      if (durations.get(street.id) != null) street.greenLightDuration = durations.get(street.id);
+    }
+
+
     for (int i = 1; i <= D; i++) {
       for (Street street : streets) street.run();
       for (Intersection intersection : intersections) {
@@ -128,13 +171,16 @@ public class Processor {
           for (Street street : intersection.incomingStreets) {
             if (street.getPotentialCars() > maxStreet.getPotentialCars()) maxStreet = street;
           }
-          if (intersection.schedules.contains(maxStreet) || maxStreet.getPotentialCars() == 0) {
-            intersection.isPlaned = true;
-          } else {
+//          System.out.println(maxStreet.id + maxStreet.endIntersectionId);
+          if (intersection.schedules.contains(maxStreet) ) {
+           intersection.isPlaned = true;
+          } else if (intersection.wait == 0 && maxStreet.getPotentialCars() > 0) {
             intersection.addSchedule(maxStreet);
+            intersection.wait = maxStreet.greenLightDuration;
           }
           intersection.run();
         }
+        if (intersection.wait > 0) intersection.wait --;
       }
       for (Street street : streets) street.updateStandby();
     }

@@ -8,7 +8,7 @@ public class Street {
     int startIntersectionId;
     int endIntersectionId;
     int length;
-    int greenLightDuration = 0;
+    int greenLightDuration = 1;
     List<Car> carsOnStreet = new ArrayList<>();
     List<Car> carsOnStandby = new ArrayList<>();
     List<Car> carsOnStandby1 = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Street {
 //        System.out.println(temp.phase);
         temp.changePhase();
 //        System.out.println(out);
-        System.out.println(temp.paths.get(temp.phase - 1));
+//        System.out.println(temp.paths.get(temp.phase - 1));
         out.get(temp.paths.get(temp.phase - 1)).carsOnStreet.add(temp);
     }
 }
